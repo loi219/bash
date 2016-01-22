@@ -1,0 +1,66 @@
+#!/bin/bash
+FILE=todo.txt
+DATEADD=$(date "+%d-%m-%Y")
+PARAM=$2
+
+function seeTasks {
+
+	echo "Tasks list"
+	grep 'Task' $FILE |sort -r
+
+}
+
+if [ ! -f  $FILE ]
+then
+   echo "##Generated on $DATEADD by $USER##" > $FILE
+fi 
+if [ "$#" -ge 1 ]
+then
+
+	case $1 in
+
+
+	'add')
+		if [ -z "$2" ]
+		then
+			echo 'Name cannot be empty'
+			exit 2
+		elif [ -z "$3" ]	
+		then
+			NUMBER_LINE=$(grep -c 'Task' $FILE)
+			TASK_NUMBER=`expr $NUMBER_LINE + 1`
+			echo "Task $TASK_NUMBER - $DATEADD - $2" >> $FILE
+			echo "Task" $2 "added in" $FILE
+		else
+			sed -i "/Task $3 \-/ a\ \t$DATEADD - $2" $FILE
+			echo "Element added in Task $3"
+		fi
+	;;
+
+	'show')
+		if [[ "$2" == 'tasks' ]]
+		then
+			seeTasks
+		else
+			less $FILE
+		fi
+	;;
+
+	'del')
+		if [ ! -z "$2" ]
+		then
+			echo "Task $2 deleted"
+			sed -i "/Task $2/,/Task/ {/Task $2/n;/Task/!d}"  $FILE
+			sed -i "/Task $2 \-/d" $FILE
+		else
+			seeTasks
+		fi
+	;;
+		*) echo 'Available commands: show add del'
+	;;
+	esac
+
+	else
+
+		echo 'Available commands: show add del'
+	fi
