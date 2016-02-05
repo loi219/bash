@@ -1,5 +1,5 @@
 #!/bin/bash
-FILE=todo.txt
+FILE="$HOME/todo.txt"
 DATEADD=$(date "+%d-%m-%Y")
 PARAM=$2
 
@@ -30,7 +30,7 @@ then
 			NUMBER_LINE=$(grep -c 'Task' $FILE)
 			TASK_NUMBER=`expr $NUMBER_LINE + 1`
 			echo "Task $TASK_NUMBER - $DATEADD - $2" >> $FILE
-			echo "Task" $2 "added in" $FILE
+			echo "Task" $NUMBER_LINE $2 "added in" $FILE
 		else
 			sed -i "/Task $3 \-/ a\ \t$DATEADD - $2" $FILE
 			echo "Element added in Task $3"
@@ -50,7 +50,7 @@ then
 		if [ ! -z "$2" ]
 		then
 			echo "Task $2 deleted"
-			sed -i "/Task $2/,/Task/ {/Task $2/n;/Task/!d}"  $FILE
+			sed -i "/Task $2/,/Task/ {/Task $2/n;/Task/!d}"  $FILE 
 			sed -i "/Task $2 \-/d" $FILE
 		else
 			seeTasks
