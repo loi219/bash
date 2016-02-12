@@ -37,15 +37,21 @@ then
 		elif [ -z "$3" ]	
 		then
 			NUMBER_LINE=$(grep -c 'Task' $FILE)
-			echo "LINE $NUMBER_LINE"
-			TASK_NUMBER=`expr $NUMBER_LINE + 1`
-			echo "NBR $TASK_NUMBER"
-			until [ ${grep -v "Task $TASK_NUMBER_NOT"} -eq 1 ]
+                        TASK_NUMBER=$NUMBER_LINE
+
+			while true
 			do
-			   TASK_NUMBER_NOT=`expr $TASK_NUMBER + 1`
+			   if grep -q "Task $TASK_NUMBER" $FILE
+			   then
+			      ((TASK_NUMBER++))
+		           else
+			      break
+			   fi
+			
 			done	
-			   echo $TASK_NUMBER_NOT
 		
+			   echo "Task $TASK_NUMBER - $DATEADD - $2" >> $FILE
+			   echo "Task" $TASK_NUMBER $2 "added in" $FILE
 		else
 			sed -i "/Task $3 \-/ a\ \t$DATEADD - $2" $FILE
 			echo "Element added in Task $3"
