@@ -10,6 +10,15 @@ function seeTasks {
 
 }
 
+function addTasks {
+
+
+			   echo "Task $TASK_NUMBER - $DATEADD - $2" >> $FILE
+			   echo "Task" $TASK_NUMBER $2 "added in" $FILE
+
+
+}
+
 if [ ! -f  $FILE ]
 then
    echo "##Generated on $DATEADD by $USER##" > $FILE
@@ -28,9 +37,21 @@ then
 		elif [ -z "$3" ]	
 		then
 			NUMBER_LINE=$(grep -c 'Task' $FILE)
-			TASK_NUMBER=`expr $NUMBER_LINE + 1`
-			echo "Task $TASK_NUMBER - $DATEADD - $2" >> $FILE
-			echo "Task" $NUMBER_LINE $2 "added in" $FILE
+                        TASK_NUMBER=$NUMBER_LINE
+
+			while true
+			do
+			   if grep -q "Task $TASK_NUMBER" $FILE
+			   then
+			      ((TASK_NUMBER++))
+		           else
+			      break
+			   fi
+			
+			done	
+		
+			   echo "Task $TASK_NUMBER - $DATEADD - $2" >> $FILE
+			   echo "Task" $TASK_NUMBER $2 "added in" $FILE
 		else
 			sed -i "/Task $3 \-/ a\ \t$DATEADD - $2" $FILE
 			echo "Element added in Task $3"
@@ -42,7 +63,7 @@ then
 		then
 			seeTasks
 		else
-			less $FILE
+			less $FILE 
 		fi
 	;;
 
