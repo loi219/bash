@@ -1,5 +1,16 @@
 #!/bin/bash
 
+#Authors: Sven Rouvinez, Yohann Meyer
+
+#
+# This script convert a source file in C++
+# to pdf with the syntaxic coloration wanted by
+# Mr. Breguet for his course INF1.
+#
+# Use this script with two parameters.
+# $1: path to source file
+# $2: Name or number of the lab
+
 echo "
 \documentclass[a4paper,9pt]{article}
 
