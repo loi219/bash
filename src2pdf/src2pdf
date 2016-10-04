@@ -55,4 +55,4 @@ echo "
 
 \lstinputlisting[style=customasm]{\pathcodefile}
 
-\end{document}" | pdflatex -jobname=Labo"$2"
+\end{document}" | pdflatex -jobname=Labo"$2" -output-directory=../converts
