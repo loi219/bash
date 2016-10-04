@@ -1,5 +1,13 @@
 #!/bin/bash
-
+#Authors: Sven Roubinez, Yohann Meyer
+#
+# This script convert a source file in C++
+# to pdf with the syntaxic coloration wanted by
+# Mr. Breguet for his course INF1.
+#
+# Use this script with two parameters.
+# $1: path to source file
+# $2: Name or number of the lab
 echo "
 \documentclass[a4paper,9pt]{article}
 
@@ -11,7 +19,7 @@ echo "
 %% Path to file, just change this one 
 \newcommand{\pathcodefile}{"$1"}
 
-\fancyhead[RO]{\footnotesize\textbf{Sven Rouvinez - INF1-C - HEIG-VD }}
+\fancyhead[RO]{\footnotesize\textbf{Yohann Meyer - INF1-C - HEIG-VD }}
 \fancyhead[LO]{\footnotesize\textbf{\pathcodefile}}
 \usepackage[usenames,dvipsnames]{color}  %% Allow color names
 \usepackage{pxfonts}
@@ -47,4 +55,4 @@ echo "
 
 \lstinputlisting[style=customasm]{\pathcodefile}
 
-\end{document}" | pdflatex -output-directory=../converts -jobname=Labo"$2"
+\end{document}" | pdflatex -jobname=Labo"$2"
