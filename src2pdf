@@ -1,5 +1,10 @@
 #!/bin/bash
+if [ ! -d "$DIRECTORY" ]; then
+   mkdir convert
+fi
 
+for f in *.h *.cpp
+do
 echo "
 \documentclass[a4paper,9pt]{article}
 
@@ -14,7 +19,7 @@ echo "
 
 
 %% Path to file, just change this one 
-\newcommand{\pathcodefile}{"$1"}
+\newcommand{\pathcodefile}{"$f"}
 \fancyheadoffset[L]{2cm}
 \fancyhead[RO]{\footnotesize\textbf{Sven Rouvinez - INF1-C - HEIG-VD}}
 \fancyhead[LO]{\includegraphics[width=50px]{/opt/src2pdf/heigvdBW.png}\footnotesize\textbf{\pathcodefile}}
@@ -48,4 +53,5 @@ echo "
 
 \lstinputlisting[style=customasm]{\pathcodefile}
 
-\end{document}" | pdflatex  -output-directory=../converts -jobname=Labo"$2"
+\end{document}" | pdflatex  -output-directory=converts -jobname=$f
+done
