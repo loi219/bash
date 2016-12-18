@@ -1,6 +1,24 @@
 #!/bin/bash
+AUTHOR="Sven Rouvinez"
+DIRECTORY="convert"
+
+
+while getopts ":a:" optname
+do
+   case "$optname" in
+   "a")
+      AUTHOR="$OPTARG"
+   ;;
+
+   *)
+      echo "false parameters"
+   ;;
+   esac
+done
+
+
 if [ ! -d "$DIRECTORY" ]; then
-   mkdir convert
+   mkdir $DIRECTORY
 fi
 
 for f in *.h *.cpp
@@ -21,7 +39,7 @@ echo "
 %% Path to file, just change this one 
 \newcommand{\pathcodefile}{"$f"}
 \fancyheadoffset[L]{2cm}
-\fancyhead[RO]{\footnotesize\textbf{Sven Rouvinez - INF1-C - HEIG-VD}}
+\fancyhead[RO]{\footnotesize\textbf{$AUTHOR - INF1-C - HEIG-VD}}
 \fancyhead[LO]{\includegraphics[width=50px]{/opt/src2pdf/heigvdBW.png}\footnotesize\textbf{\pathcodefile}}
 
    \definecolor{lightGray}{rgb}{0.66,0.66,0.66}
@@ -53,5 +71,5 @@ echo "
 
 \lstinputlisting[style=customasm]{\pathcodefile}
 
-\end{document}" | pdflatex  -output-directory=converts -jobname=$f
+\end{document}" | pdflatex  -output-directory=$DIRECTORY -jobname=$f
 done
