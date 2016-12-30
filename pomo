@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+#Start a timer with a given name and count them
+
+NBRE_POMO=0
+
+function conversion {
+   
+   return $1*60 
+}
+
+function usage {
+   echo "Usage: $0 [-n <name>] [-t <number>]" 1>&2; exit 1; 
+
+}
+
+function countdown {
+   clear
+   TIMER=$1 
+   DELTA=$((`date +%s` + $TIMER)); 
+
+   while [ "$DELTA" -ge `date +%s` ]; do 
+      echo -ne "TIMER: $TIMER_NAME - $(date -u --date @$(($DELTA - `date +%s` )) +%H:%M:%S)\r"
+      sleep 1;
+   done
+}
+
+function notify {
+   PRINT_TIME=5*3600
+   notify-send $1 -t 1000000
+
+}
+
+while getopts ":n:t:" optname
+do
+   case $optname in
+   n)
+      TIMER_NAME=$OPTARG
+   ;;
+   t)
+      TIMER_USER=$OPTARG
+   ;;
+   *)
+      echo "false parameters"
+   ;;
+   esac
+done
+
+if [ -z "$TIMER_NAME" ] || [ -z "$TIMER_USER" ];
+then
+   usage
+fi
+
+REPLY="y"
+echo -e '\033]2;'$TIMER_NAME'\007'
+
+while [ "$REPLY" == "y" ]
+do
+
+   case "$REPLY" in
+   "y")
+
+
+   NBRE_POMO=$((NBRE_POMO+1))
+
+   echo -e '\033]2;'$TIMER_NAME $NBRE_POMO'\007'
+
+   countdown  $TIMER_USER*60
+   notify "timer $TIMER_NAME fertig"
+
+   countdown 5*60
+   notify "pause finie"
+
+   echo -e "\nNumber of pomo: $NBRE_POMO"
+   echo -e "\nAgain?"
+   read -n1 -s
+   ;;
+   esac
+
+done
+
