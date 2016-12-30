@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
 #Start a timer with a given name and count them
 
-NBRE_POMO=0
+NBRE_POMO=1
 
-function conversion {
-   
-   return $1*60 
-}
 
 function usage {
    echo "Usage: $0 [-n <name>] [-t <number>]" 1>&2; exit 1; 
@@ -15,8 +11,9 @@ function usage {
 
 function countdown {
    clear
-   TIMER=$1 
-   DELTA=$((`date +%s` + $TIMER)); 
+   local TIMER=$1 
+   local TIMER_NAME=$2
+   local DELTA=$((`date +%s` + $TIMER)); 
 
    while [ "$DELTA" -ge `date +%s` ]; do 
       echo -ne "TIMER: $TIMER_NAME - $(date -u --date @$(($DELTA - `date +%s` )) +%H:%M:%S)\r"
@@ -25,9 +22,46 @@ function countdown {
 }
 
 function notify {
-   PRINT_TIME=5*3600
    notify-send $1 -t 1000000
 
+}
+
+function ask {
+#From: http://djm.me/ask
+
+    local prompt default REPLY
+
+    while true; do
+
+        if [ "${2:-}" = "Y" ]; then
+            prompt="Y/n"
+            default=Y
+        elif [ "${2:-}" = "N" ]; then
+            prompt="y/N"
+            default=N
+        else
+            prompt="y/n"
+            default=
+        fi
+
+        # Ask the question (not using "read -p" as it uses stderr not stdout)
+        echo -n "$1 [$prompt] "
+
+        # Read the answer (use /dev/tty in case stdin is redirected from somewhere else)
+        read REPLY </dev/tty
+
+        # Default?
+        if [ -z "$REPLY" ]; then
+            REPLY=$default
+        fi
+
+        # Check if the reply is valid
+        case "$REPLY" in
+            Y*|y*) return 0 ;;
+            N*|n*) return 1 ;;
+        esac
+
+    done
 }
 
 while getopts ":n:t:" optname
@@ -45,36 +79,29 @@ do
    esac
 done
 
-if [ -z "$TIMER_NAME" ] || [ -z "$TIMER_USER" ];
+if [ -z "$TIMER_NAME" ] || [ -z "$TIMER_USER" ]
 then
    usage
 fi
 
-REPLY="y"
-echo -e '\033]2;'$TIMER_NAME'\007'
 
-while [ "$REPLY" == "y" ]
+
+while true
 do
+   echo -e '\033]2;' "POMO $TIMER_NAME $NBRE_POMO"'\007'
 
-   case "$REPLY" in
-   "y")
-
-
-   NBRE_POMO=$((NBRE_POMO+1))
-
-   echo -e '\033]2;'$TIMER_NAME $NBRE_POMO'\007'
-
-   countdown  $TIMER_USER*60
+   countdown  $TIMER_USER*60 $TIMER_NAME
    notify "timer $TIMER_NAME fertig"
 
-   countdown 5*60
+   countdown 5*60 "PAUSE"
    notify "pause finie"
 
    echo -e "\nNumber of pomo: $NBRE_POMO"
-   echo -e "\nAgain?"
-   read -n1 -s
-   ;;
-   esac
+   NBRE_POMO=$((NBRE_POMO+1))
 
+   if ! ask "Again?"
+   then
+     exit 0 
+   fi
 done
 
